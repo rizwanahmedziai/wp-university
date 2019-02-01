@@ -12,9 +12,9 @@ add_action( 'wp_enqueue_scripts', 'wp_university_files' );
 
 // Add theme features
 function wp_university_features() {
-  register_nav_menu( 'header-menu', 'Header Menu' );
-  register_nav_menu( 'footer-menu-1', 'Footer Menu 1' );
-  register_nav_menu( 'footer-menu-2', 'Footer Menu 2' );
+  // register_nav_menu( 'header-menu', 'Header Menu' );
+  // register_nav_menu( 'footer-menu-1', 'Footer Menu 1' );
+  // register_nav_menu( 'footer-menu-2', 'Footer Menu 2' );
 
   add_theme_support('title-tag');
 }
