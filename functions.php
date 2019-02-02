@@ -68,5 +68,27 @@ function wp_university_custom_posts() {
 
 add_action( 'init', 'wp_university_custom_posts' );
 
+// Lesson 034 Manipulating Default URL Based Queries
+
+function wp_university_adjust_queries($query) {
+  if(!is_admin() && is_post_type_archive('event') && $query->is_main_query()) {
+
+    $today = date('Ymd');
+    $query->set('meta_key', 'event_date');
+    $query->set('orderby', 'meta_value_num');
+    $query->set('order', 'ASC');
+    $query->set('meta_query', array(
+      array(
+        'key'         =>   'event_date',
+        'compare'     =>    '>=',   // show date greater than or equal to today. i.e don't show past dates
+        'value'       =>    $today,
+        'type'        =>   'numeric'
+      )
+    ));
+
+  }
+}
+add_action( 'pre_get_posts', 'wp_university_adjust_queries');
+
 
  ?>

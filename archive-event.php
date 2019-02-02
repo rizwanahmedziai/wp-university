@@ -15,8 +15,19 @@
     the_post(); ?>
     <div class="event-summary">
       <a class="event-summary__date t-center" href="<?php the_permalink(); ?>">
-        <span class="event-summary__month"><?php the_time('M') ?></span>
-        <span class="event-summary__day"><?php the_time('d') ?></span>
+        <span class="event-summary__month"><?php
+          // This is the core php function used to format and retrieve dates
+          // We will pass the custom field value as the argument.
+          // get_field() = returns the field value
+          // the_field() = echos the field value
+
+          $newDate = new DateTime();
+          $eventDate = $newDate->createFromFormat('d/m/Y', get_field('event_date'));
+          echo $eventDate->format('M')
+          // the_field('event_date');
+
+          ?></span>
+        <span class="event-summary__day"><?php echo $eventDate->format('d') ?></span>
       </a>
       <div class="event-summary__content">
         <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
