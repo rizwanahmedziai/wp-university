@@ -10,6 +10,11 @@
   border: none;
   outline: none;
 
+  a{
+    color: #FFF;
+    text-decoration: none;
+  }
+
   &--small {
     font-size: .88rem;
     padding: 7px 13px;
