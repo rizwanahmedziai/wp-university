@@ -17,23 +17,55 @@
     <div class="full-width-split__inner">
       <h2 class="headline headline--small-plus t-center">Upcoming Events</h2>
         <?php
+          $today = date('Ymd');
           $homepageEventQuery = new WP_Query(
             array(
-              'posts_per_page'  =>   2,
-              'post_type'       =>   'event'
-            )
-          );
+              'posts_per_page'  =>   2,        //i.e to Show all posts use -1
+              'post_type'       =>   'event',   //Custom post type
+              'meta_key'        =>   'event_date',  //custom field meta
+              'orderby'         =>   'meta_value_num',  // meta type sort order
+              'order'           =>   'ASC',   // Ascending order Latest date first
+              'meta_query'      =>   array (  // Custom meta data query
+                array (
+                  'key'         =>   'event_date',
+                  'compare'     =>    '>=',   // show date greater than or equal to today. i.e don't show past dates
+                  'value'       =>    $today,
+                  'type'        =>   'numeric'
+                )
+              )
+            ));
           while ($homepageEventQuery->have_posts()) {
             $homepageEventQuery->the_post();
             ?>
             <div class="event-summary">
               <a class="event-summary__date t-center" href="<?php the_permalink(); ?>">
-                <span class="event-summary__month"><?php the_time('M') ?></span>
-                <span class="event-summary__day"><?php the_time('d') ?></span>
+                <span class="event-summary__month"><?php
+                  // This is the core php function used to format and retrieve dates
+                  // We will pass the custom field value as the argument.
+                  // get_field() = returns the field value
+                  // the_field() = echos the field value
+
+                  $newDate = new DateTime();
+                  $eventDate = $newDate->createFromFormat('d/m/Y', get_field('event_date'));
+                  echo $eventDate->format('M')
+                  // the_field('event_date');
+
+                  ?></span>
+                <span class="event-summary__day"><?php echo $eventDate->format('d') ?></span>
               </a>
               <div class="event-summary__content">
                 <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
-                <p><?php echo wp_trim_words(get_the_content(), 18) ?> <br><a href="<?php the_permalink(); ?>" class="nu gray">Learn more</a></p>
+                <p><?php
+
+                // If the Custom Post has a custom Excerpt, display that
+                // Else display custom excerpt
+
+                if (has_excerpt()) {
+                  echo get_the_excerpt();
+                } else {
+                  echo wp_trim_words(get_the_content(), 18);
+                }
+                ?> <br><a href="<?php the_permalink(); ?>" class="nu gray">Learn more</a></p>
               </div>
             </div>
             <?php
@@ -43,7 +75,9 @@
 
 
 
-      <p class="t-center no-margin"><a href="<?php echo get_post_type_archive_link( 'event' ); ?>" class="btn btn--blue">View All Events</a></p>
+      <p class="t-center no-margin"><a href="<?php
+        echo get_post_type_archive_link( 'event' );   // Function for Custom post type archive page permalink
+        ?>" class="btn btn--blue">View All Events</a></p>
 
     </div>
   </div>
@@ -75,7 +109,17 @@
               </a>
               <div class="event-summary__content">
                 <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
-                <p><?php echo wp_trim_words(get_the_content(), 20) ?><br><a href="<?php the_permalink(); ?>" class="nu gray"> Read more</a></p>
+                <p><?php
+
+                // If the Post has a custom Excerpt, display that
+                // Else display custom excerpt
+
+                if (has_excerpt()) {
+                  echo get_the_excerpt();
+                } else {
+                  echo wp_trim_words(get_the_content(), 18);
+                }
+                 ?><br><a href="<?php the_permalink(); ?>" class="nu gray"> Read more</a></p>
               </div>
             </div>
             <?php

@@ -60,6 +60,7 @@ function wp_university_custom_posts() {
         'menu_position'      => null,
         'menu_icon'          => 'dashicons-calendar',
         'rewrite'            => array( 'slug' => 'events' ),
+        'supports'           => array('title', 'editor', 'excerpt'),
     );
 
     register_post_type( 'event', $args );
