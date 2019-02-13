@@ -32,9 +32,40 @@ add_action( 'after_switch_theme', 'flush_rewrite_rules' );
 //  */
 function wp_university_custom_posts() {
 
+  // Create the 'Programs' Custom Post type
+  // Copied from wordpress codex
+  $labels = array(
+        'name'                  => _x( 'Programs', 'Post type general name', 'programs' ),
+        'singular_name'         => _x( 'Program', 'Post type singular name', 'program' ),
+        'menu_name'             => _x( 'Programs', 'Admin Menu text', 'menu_program' ),
+        'featured_image'        => _x( 'Program Cover Image', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'textdomain' ),
+        'set_featured_image'    => _x( 'Set cover image', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
+        'add_new_item'          => __( 'Add New Program', 'add_new_program' ),
+        'edit_item'             => __( 'Edit Program', 'edit-program' ),
+        'all_items'             => __('All Programs', 'all_programs'),
+        'name_admin_bar'        => _x( 'Program', 'Add New on Toolbar', 'admin_program' ),
+    );
+
+    $args = array(
+        'labels'             => $labels,
+        'public'             => true,
+        'publicly_queryable' => true,
+        'show_ui'            => true,
+        'show_in_menu'       => true,
+        'query_var'          => true,
+        'capability_type'    => 'post',
+        'has_archive'        => true,
+        'hierarchical'       => false,
+        'menu_position'      => null,
+        'menu_icon'          => 'dashicons-awards',
+        'rewrite'            => array( 'slug' => 'programs' ),
+        'supports'           => array('title', 'editor'),
+    );
+
+    register_post_type( 'program', $args );
+
   // Create the Events Custom Post type
   // Copied from wordpress codex
-
     $labels = array(
         'name'                  => _x( 'Events', 'Post type general name', 'events' ),
         'singular_name'         => _x( 'Event', 'Post type singular name', 'event' ),
@@ -71,8 +102,13 @@ add_action( 'init', 'wp_university_custom_posts' );
 // Lesson 034 Manipulating Default URL Based Queries
 
 function wp_university_adjust_queries($query) {
-  if(!is_admin() && is_post_type_archive('event') && $query->is_main_query()) {
 
+  if(!is_admin() && is_post_type_archive('program') && $query->is_main_query()) {
+    $query->set('orderby', 'title');
+    $query->set('order', 'ASC');
+    $query->set('posts_per_page', -1);
+  }
+  if(!is_admin() && is_post_type_archive('event') && $query->is_main_query()) {
     $today = date('Ymd');
     $query->set('meta_key', 'event_date');
     $query->set('orderby', 'meta_value_num');
